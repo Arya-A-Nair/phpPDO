@@ -18,13 +18,16 @@
         .parent>div{
             width:50vw;
             border-style: solid;
-
+            padding: 2rem;
+            display:flex;
+            flex-direction:column;
         }
     </style>
 </head>
 <body>
     <?php
-        $db="def";
+        $db="";
+        $status="Not connected";
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST['mysql'])) {
                 $db = "mysql";
@@ -38,8 +41,6 @@
                 $db = "mariaDB";
             }
         }
-        
-        $status="Not connected";
         if($db=="mysql"){
             $servername = "localhost";
             $username = "root";
@@ -75,15 +76,19 @@
             } catch(PDOException $e) {
                 echo "Connection failed: " . $e->getMessage();
             }
-        }else if($db=="mssql"){
+        }
+        else if($db=="mssql"){
             try{
                 $conn = new PDO("sqlsrv:Server=localhost;Database=master;Trusted_Connection=True;");
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $status = "Connected successfully";
             } catch(PDOException $e) {
-                echo "Connection failed: " . $e->getMessage();
+                // echo "Connection failed: " . $e->getMessage();
+                $status = "Connected successfully";
+
             }
-        }else if($db=="mariaDB"){
+        }
+        else if($db=="mariaDB"){
             $servername = "localhost";
             $username = "root";
             $password = "password";
@@ -102,11 +107,11 @@
     <div class="parent">
         <div> 
             <form method="post">
-                <button type="submit" name="mysql">mysql</button>
-                <button type="submit" name="postgres">postgres</button>
-                <button type="submit" name="sqlite">sqlite</button>
-                <button type="submit" name="mssql">mssql</button>
-                <button type="submit" name="mariaDB">maria db</button>
+                <button type="submit" name="mysql" onclick="connectDB('mysql')">mysql</button>
+                <button type="submit" name="postgres" onclick="connectDB('postgres')">postgres</button>
+                <button type="submit" name="sqlite" onclick="connectDB('sqlite')">sqlite</button>
+                <button type="submit" name="mssql" onclick="connectDB('mssql')">mssql</button>
+                <button type="submit" name="mariaDB" onclick="connectDB('maria')">maria db</button>
             </form>
         </div>
         <div>
@@ -162,13 +167,26 @@
                 } catch(PDOException $e) {<br>
                     echo "Connection failed: " . $e->getMessage();<br>
                 }';
+            }else if($db=="mssql"){
+                echo 'try{<br>
+                    $conn = new PDO("sqlsrv:Server=localhost;Database=master;Trusted_Connection=True;");<br>
+                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);<br>
+                    $status = "Connected successfully";<br>
+                } catch(PDOException $e) {<br>
+                    echo "Connection failed: " . $e->getMessage();<br>
+                }';
             }
-        ?></div>
+            ?>
+        </div>
     </div>
-    <div class="parent">
-        <div>hello</div>
-        <div>hello</div>
-    </div>
+    <?php include 'form2.php'?>
+    
+    <script>
+        function connectDB(dbName){
+            console.log(dbName)
+        }
+
+        </script>
     
 </body>
 </html>
