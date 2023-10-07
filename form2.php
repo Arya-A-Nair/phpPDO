@@ -1,37 +1,24 @@
 <?php
-    $servername = "localhost";
-    $username = "root";
-    $password = "password";
-    $dbname="class";
-    try {
-        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username);
-        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $status = "Connected successfully";
-    } catch(PDOException $e) {
-        echo "Connection failed: " . $e->getMessage();
-    }
+    function connectDb(){
+        try{
 
+            $db= new PDO("mysql:host=localhost;dbname=class","root");
+            $db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+            return $db;
+        } catch (PDOException $e) {
+            echo "Connection failed: " . $e->getMessage();
+        }
+    }
+    
+    if(isset($_POST['operation']))
+    {
+        $conn=connectDb(); 
+        $sql="insert into students(name,rollNo,class) values(:name,:rollNo,:class)";
+        $stmt=$conn->prepare($sql);
+        $stmt->bindParam(':name',$_POST['name']);
+        $stmt->bindParam(':rollNo',$_POST['rollNo']);
+        $stmt->bindParam(':class',$_POST['class']);
+        $stmt->execute();
+    }
 ?>
 
-
-    <div style="border-style:solid;height:50vh">
-            <form method="post" >
-                <button type="submit" name="Update">Update</button>
-                <button type="submit" name="Insert">Insert</button>
-                <button type="submit" name="Delete">Delete</button>
-            </form>
-            <div class="parent">
-            <?php
-            if(isset($_POST['Update'])){
-                echo "Update";
-            }
-            if(isset($_POST['Insert'])){
-                echo "Insert";
-            }
-            if(isset($_POST['Delete'])){
-                echo "Delete";
-            }
-        ?>
-            
-    </div>
-</div>
